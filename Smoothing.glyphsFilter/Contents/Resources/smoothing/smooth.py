@@ -24,16 +24,32 @@ def smooth(self, value):
 							x5 = path.nodes[node.index + 3].position[0]
 							y5 = path.nodes[node.index + 3].position[1]
 
-							# Create original segment list from nodes
-							original = [
+							# Point of line intersection of tangent vectors
+							p = lineIntersection(x2, y2, x3, y3, x4, y4, x5, y5)
+							px = p[0]
+							py = p[1]
+
+							# Tension of original curve
+							if x2 != x3:
+								t3 = (x3 - x2) / (px - x2)
+
+							else:
+								t3 = (y3 - y2) / (py - y2)
+
+							if x4 != x5:
+								t4 = (x4 - x5) / (px - x5)
+
+							else:
+								t4 = (y4 - y5) / (py - y5)
+
+							t = (t3 + t4) / 2
+
+							# Area of original path
+							originalArea = area([
 								[(x1, y1), (x2, y2)],
 								[(x2, y2), (x3, y3), (x4, y4), (x5, y5)],
 								[(x5, y5), (x1, y1)]
-							]
-
-							# Area of original path
-							originalArea = area(original)
-
+							])
 
 							# Create test path
 
@@ -45,11 +61,6 @@ def smooth(self, value):
 							ny2 = y2 - dy2 / 2
 
 							# Calculate n3 position (bisection)
-
-							# Point of line intersection of tangent vectors
-							p = lineIntersection(x2, y2, x3, y3, x4, y4, x5, y5)
-							px = p[0]
-							py = p[1]
 
 							dx3 = px - nx2
 							dy3 = py - ny2
@@ -82,7 +93,20 @@ def smooth(self, value):
 							# Area of new path
 							newArea = area(new)
 
-							self.logToConsole(newArea)
+							#self.logToConsole(newArea)
+
+
+							testing = True
+
+							# Outer loop: find new node2 position
+							while testing == True:
+								self.logToConsole('testing')
+
+								# Stop when change of tension is greater than improvement of continuity
+								testing = False
+
+
+
 
 
 						# Previous 3 nodes are curve, next node is line
