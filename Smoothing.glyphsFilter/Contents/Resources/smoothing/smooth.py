@@ -1,6 +1,6 @@
 from GlyphsApp import *
 from GlyphsApp.plugins import *
-from .helpers import lineIntersection, area
+from .math import lineIntersection, area
 
 
 def smooth(self, value):
