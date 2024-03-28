@@ -1,3 +1,22 @@
+def bezier(a, b, c, d, t):
+	return a * pow((1 - t), 3) + 3 * b * pow((1 - t), 2) * t + 3 * c * (1 - t) * pow(t, 2) + d * pow(t, 3)
+
+def bezierPrime(a, b, c, d, t):
+	return -3 * a * pow((1 - t), 2) + 3 * b * pow((1 - t), 2) - 6 * b * (1 - t) * t + 6 * c * (1 - t) * t - 3 * c * pow(t, 2) + 3 * d * pow(t, 2)
+
+def bezierDoublePrime(a, b, c, d, t):
+	return 6 * a * (1 - t) - 6 * b * (1 - t) - 6 * b * (1 - t) + 6 * b * t + 6 * c * (1 - t) - 6 * c * t - 6 * c * t + 6 * d * t
+
+
+def curvature(x1, y1, x2, y2, x3, y3, x4, y4, t):
+	x_1 = bezierPrime(x1, x2, x3, x4, t)
+	y_1 = bezierPrime(y1, y2, y3, y4, t)
+	x_2 = bezierDoublePrime(x1, x2, x3, x4, t)
+	y_2 = bezierDoublePrime(y1, y2, y3, y4, t)
+
+	return abs(x_1 * y_2 - x_2 * y_1) / pow((pow(x_1, 2) + pow(y_1, 2)), 3 / 2)
+
+
 def lineIntersection(x1, y1, x2, y2, x3, y3, x4, y4):
 	x = ( (x2 - x1) * (x3 * y4 - y3 * x4) - (x4 - x3) * (x1 * y2 - y1 * x2) ) / ( (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3) )
 	y = ( (y2 - y1) * (x3 * y4 - y3 * x4) - (y4 - y3) * (x1 * y2 - y1 * x2) ) / ( (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3) )

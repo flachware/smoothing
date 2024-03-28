@@ -1,6 +1,6 @@
 from GlyphsApp import *
 from GlyphsApp.plugins import *
-from .math import lineIntersection, area
+from .math import curvature, lineIntersection, area
 
 
 def smooth(self, value):
@@ -28,6 +28,10 @@ def smooth(self, value):
 							p = lineIntersection(x2, y2, x3, y3, x4, y4, x5, y5)
 							px = p[0]
 							py = p[1]
+
+							# Curvature of original curve in x1/y1
+							originalCurvature = curvature(x2, y2, x3, y3, x4, y4, x5, y5, 0)
+							self.logToConsole(originalCurvature)
 
 							# Tension of original curve
 							if x2 != x3:
