@@ -3,6 +3,41 @@ from GlyphsApp.plugins import *
 from .math import curvature, lineIntersection, area
 
 
+# Get superness by matching areas
+def getSuperness(self, originalArea, x1, y1, nx2_2, ny2_2, px, py, x5, y5):
+
+	# Set boundaries for bisection
+	s1 = 0
+	s3 = 1
+	superness = 0
+	bisect = True
+
+	while bisect == True:
+		s2 = s1 + (s3 - s1) / 2
+
+		# Create control points from superness
+		nx3 = nx2_2 + (px - nx2_2) * s2
+		ny3 = ny2_2 + (py - ny2_2) * s2
+		nx4 = x5 + (px - x5) * s2
+		ny4 = y5 + (py - y5) * s2
+
+		# Calculate area of new path
+		newArea = area([
+			[(x1, y1), (nx2_2, ny2_2)],
+			[(nx2_2, ny2_2), (nx3, ny3), (nx4, ny4), (x5, y5)],
+			[(x5, y5), (x1, y1)]
+		])
+
+		if round(newArea) < round(originalArea):
+			s1 = s2
+
+		elif round(newArea) > round(originalArea):
+			s3 = s2
+
+		else:
+			return s2
+
+
 def smooth(self, value):
 	for layer in Glyphs.font.selectedLayers:
 		for path in layer.paths:
@@ -31,22 +66,22 @@ def smooth(self, value):
 
 							# Curvature of original curve in x1/y1
 							originalCurvature = curvature(x2, y2, x3, y3, x4, y4, x5, y5, 0)
-							self.logToConsole(originalCurvature)
+							#self.logToConsole(originalCurvature)
 
-							# Tension of original curve
+							# Superness of original curve
 							if x2 != x3:
-								t3 = (x3 - x2) / (px - x2)
+								s3 = (x3 - x2) / (px - x2)
 
 							else:
-								t3 = (y3 - y2) / (py - y2)
+								s3 = (y3 - y2) / (py - y2)
 
 							if x4 != x5:
-								t4 = (x4 - x5) / (px - x5)
+								s4 = (x4 - x5) / (px - x5)
 
 							else:
-								t4 = (y4 - y5) / (py - y5)
+								s4 = (y4 - y5) / (py - y5)
 
-							t = (t3 + t4) / 2
+							originalSuperness = (s3 + s4) / 2
 
 							# Area of original path
 							originalArea = area([
@@ -55,58 +90,25 @@ def smooth(self, value):
 								[(x5, y5), (x1, y1)]
 							])
 
-							# Create test path
-
-							# Calculate n2 position (bisection)
-
-							dx2 = x2 - x1
-							dy2 = y2 - y1
-							nx2 = x2 - dx2 / 2
-							ny2 = y2 - dy2 / 2
-
-							# Calculate n3 position (bisection)
-
-							dx3 = px - nx2
-							dy3 = py - ny2
-							nx3 = px - dx3 * (1 - 0.55228) / 2
-							ny3 = py - dy3 * (1 - 0.55228) / 2
-
-							# Calculate n4 position (bisection)
-
-							dx4 = px - x5
-							dy4 = py - y5
-							nx4 = px - dx4 * (1 - 0.55228) / 2
-							ny4 = py - dy4 * (1 - 0.55228) / 2
-
-							# New nodes
-
-							n1 = (x1, y1)
-							n2 = (nx2, ny2)
-							n3 = (nx3, ny3)
-							n4 = (nx4, ny4)
-							n5 = (x5, y5)
-
-							# New segment list
-
-							new = [
-								[n1, n2],
-								[n2, n3, n4, n5],
-								[n5, n1]
-							]
-
-							# Area of new path
-							newArea = area(new)
-
-							#self.logToConsole(newArea)
 
 
+
+							# Set boundaries for bisection
+							nx2_1 = x1
+							ny2_1 = y1
+							nx2_3 = x2
+							ny2_3 = y2
 							testing = True
 
-							# Outer loop: find new node2 position
 							while testing == True:
-								self.logToConsole('testing')
+								nx2_2 = nx2_3 - (nx2_3 - nx2_1) / 2
+								ny2_2 = ny2_3 - (ny2_3 - ny2_1) / 2
 
-								# Stop when change of tension is greater than improvement of continuity
+								# Get best superness for the new curve
+								newSuperness = getSuperness(self, originalArea, x1, y1, nx2_2, ny2_2, px, py, x5, y5)
+								self.logToConsole(newSuperness)
+
+								# Stop when change of tension is equal to improvement of continuity
 								testing = False
 
 
