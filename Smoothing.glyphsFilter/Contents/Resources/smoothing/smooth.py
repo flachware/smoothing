@@ -134,12 +134,12 @@ def smooth(self, value):
 									minMax.append(min + max)
 
 								if round(minMax[0], precision) < round(minMax[1], precision):
-									nx2_4 = nx2_2
-									ny2_4 = ny2_2
+									nx2_4 = nx2_3
+									ny2_4 = ny2_3
 
 								elif round(minMax[1], precision) < round(minMax[0], precision):
-									nx2_1 = nx2_3
-									ny2_1 = ny2_3
+									nx2_1 = nx2_2
+									ny2_1 = ny2_2
 
 								else:
 									nx2 = nx2_2
