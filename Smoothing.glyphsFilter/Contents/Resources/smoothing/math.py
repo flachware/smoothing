@@ -67,4 +67,4 @@ def area(segments):
 			line_area = 1/2 * ( Fl(x0, x1, y0, y1, 1) - Fl(x0, x1, y0, y1, 0) )
 			area += line_area
 
-	return area
+	return abs(area)
